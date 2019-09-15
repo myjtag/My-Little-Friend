@@ -1,2 +1,2 @@
-/PCB/History/
-/PCB/__Previews/
+PCB/**/__Previews/
+PCB/**/History/*
