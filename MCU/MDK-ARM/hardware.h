@@ -10,3 +10,8 @@
 
 //With this fucntion we can read the keypad
 int getKeypad(void);
+
+//It would write a single 16bit data into the RGB controller cheap
+void STP1612PW05_SPI(uint16_t data,uint16_t LEMASK);
+//It would write all the data to the all the channels
+void STP1612PW05_WriteAll(void);
