@@ -31,6 +31,8 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 extern uint16_t RGB_DATA[16];
+extern uint8_t SegmentPatern[16];
+extern uint8_t segmentBuffer[4];
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -107,28 +109,27 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 	//static int key;
-	//char myName[20] = {"ASiDesigner\r\n"};
+	char myName[20] = {"ASiDesigner\r\n"};	
 	HAL_TIM_PWM_Start(&htim14,TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	int i=0;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		 
-		/*key = getKeypad();
-		if(key == Key_OK){
-			HAL_UART_Transmit(&huart1,(uint8_t *)myName,strlen(myName),100);
-			HAL_GPIO_WritePin( GPIOF,GPIO_PIN_0,GPIO_PIN_RESET);
-			HAL_Delay(100);
-			HAL_GPIO_WritePin( GPIOF,GPIO_PIN_0,GPIO_PIN_SET);
-			HAL_Delay(100);
-		}
-		i++;*/
-		STP1612PW05_WriteAll();
+		sprintf(myName,"%04d",i);
+		segmentBuffer[0] = myName[0] - '0';
+		segmentBuffer[1] = myName[1] - '0';
+		segmentBuffer[2] = myName[2] - '0';
+		segmentBuffer[3] = myName[3] - '0';
+		i++;
+		if(i>9999)
+			i = 0;
+		HAL_Delay(10);
   }
   /* USER CODE END 3 */
 }

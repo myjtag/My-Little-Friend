@@ -15,3 +15,10 @@ int getKeypad(void);
 void STP1612PW05_SPI(uint16_t data,uint16_t LEMASK);
 //It would write all the data to the all the channels
 void STP1612PW05_WriteAll(void);
+
+
+//7 segment functions
+//It will map RGB data to 7 segment
+void RGBtoSegment(uint8_t data);
+//It would update all the 7 segments
+void updateSegment(void);

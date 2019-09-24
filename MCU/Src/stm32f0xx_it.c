@@ -23,11 +23,12 @@
 #include "stm32f0xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "hardware.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
-
+uint8_t refCnt =0;
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -150,6 +151,13 @@ void TIM17_IRQHandler(void)
   /* USER CODE END TIM17_IRQn 0 */
   HAL_TIM_IRQHandler(&htim17);
   /* USER CODE BEGIN TIM17_IRQn 1 */
+	refCnt++;
+	if(refCnt>3)
+	{
+		refCnt = 0;
+		updateSegment();
+	}
+	
 
   /* USER CODE END TIM17_IRQn 1 */
 }
