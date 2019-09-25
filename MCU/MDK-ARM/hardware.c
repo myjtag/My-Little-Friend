@@ -3,6 +3,8 @@
 #define Data_Latch		0x0001
 #define Global_latch	0x0002
 
+DS1307 Now;
+extern I2C_HandleTypeDef hi2c1;
 uint16_t RGB_DATA[16]={0};
 uint8_t SegmentPatern[16]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0x39,0x5E,0x79,0x71};
 uint8_t segmentBuffer[4]={0,1,2,3};
@@ -144,3 +146,39 @@ void updateSegment(void){
 	if(segCnt>3)
 		segCnt = 0;
 }
+
+void SetTime(uint8_t second,uint8_t minute,uint8_t hour,uint8_t day,uint8_t date,uint8_t month,uint8_t year){
+	
+	//Firt convert from binary to BCD fomrat since DS1307 would accept data in BCD
+	second = ((second/10)<<4) + second %10;
+	minute = ((minute/10)<<4) + minute %10;
+	hour = ((hour/10)<<4) + hour %10;
+	day = ((day/10)<<4) + day %10;
+	date = ((date/10)<<4) + date %10;
+	month = ((month/10)<<4) + month %10;
+	year = ((year/10)<<4) + year %10;
+	
+	uint8_t  txBuf[8] ={0,second,minute,hour,day,date,month,year};
+	 
+	HAL_I2C_Master_Transmit(&hi2c1,DS1307ADD,txBuf,8,100);
+}
+
+void GetTime(void){
+	uint8_t txBuf[1]={0};
+	uint8_t rxBuf[7];
+	
+	//first set the RAM addres to point to 0
+	HAL_I2C_Master_Transmit(&hi2c1,DS1307ADD,txBuf,1,100);
+	
+	//Now read all the clock and clander data
+	HAL_I2C_Master_Receive(&hi2c1,DS1307ADD,rxBuf,7,100);
+	//now we have all the data, we should change them back from BCD to Binary
+	Now.second = ((rxBuf[0]>>4)*10) + rxBuf[0]%16;
+	Now.minute = ((rxBuf[1]>>4)*10) + rxBuf[1]%16;
+	Now.hour = ((rxBuf[2]>>4)*10) + rxBuf[2]%16;
+	Now.day = ((rxBuf[3]>>4)*10) + rxBuf[3]%16;
+	Now.date = ((rxBuf[4]>>4)*10) + rxBuf[4]%16;
+	Now.month = ((rxBuf[5]>>4)*10) + rxBuf[5]%16;
+	Now.year = ((rxBuf[6]>>4)*10) + rxBuf[6]%16;
+
+};

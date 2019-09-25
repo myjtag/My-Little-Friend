@@ -116,11 +116,13 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	int i=0;
+	SetTime(31,6,14,5,25,9,18);
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+		GetTime();
 		sprintf(myName,"%04d",i);
 		segmentBuffer[0] = myName[0] - '0';
 		segmentBuffer[1] = myName[1] - '0';
