@@ -3,6 +3,8 @@
 #define Data_Latch		0x0001
 #define Global_latch	0x0002
 
+extern uint8_t URATRX[50];
+extern uint8_t RXDcnt;
 DS1307 Now;
 extern I2C_HandleTypeDef hi2c1;
 uint16_t RGB_DATA[16]={0};
@@ -182,3 +184,13 @@ void GetTime(void){
 	Now.year = ((rxBuf[6]>>4)*10) + rxBuf[6]%16;
 
 };
+
+//it would clear all the data in UART recive buffer
+void clearRXD(void){
+
+	uint8_t i=0;
+	for(i=0;i<50;i++)
+		URATRX[i] = 0;
+	RXDcnt= 0;
+}
+

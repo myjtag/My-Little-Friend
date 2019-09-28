@@ -33,6 +33,8 @@
 extern uint16_t RGB_DATA[16];
 extern uint8_t SegmentPatern[16];
 extern uint8_t segmentBuffer[4];
+uint8_t uartTMP[1];
+extern uint8_t URATRX[50];
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -110,6 +112,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	//static int key;
 	char myName[20] = {"ASiDesigner\r\n"};	
+	char txtBuf[50];
 	HAL_TIM_PWM_Start(&htim14,TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
@@ -117,6 +120,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	int i=0;
 	SetTime(31,6,14,5,25,9,18);
+	HAL_UART_Receive_IT(&huart1,uartTMP,1);
   while (1)
   {
     /* USER CODE END WHILE */
@@ -132,6 +136,13 @@ int main(void)
 		if(i>9999)
 			i = 0;
 		HAL_Delay(10);
+		//Pars Uart incoming data
+		//if it's NAM, please tell me your name
+		if(URATRX[0] == 'N' && URATRX[1] == 'A' && URATRX[2] == 'M'){
+			sprintf(txtBuf,"ASiDesigner and the cnt is %d\r\n",i);
+			HAL_UART_Transmit(&huart1,txtBuf,strlen(txtBuf),100);
+			clearRXD();
+		}
   }
   /* USER CODE END 3 */
 }

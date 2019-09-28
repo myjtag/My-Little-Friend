@@ -37,3 +37,8 @@ void updateSegment(void);
 //RTC functions
 void SetTime(uint8_t second,uint8_t minute,uint8_t hour,uint8_t day,uint8_t date,uint8_t month,uint8_t year);
 void GetTime(void);
+
+//Uart functions
+//it would clear all the data in UART recive buffer
+void clearRXD(void);
+

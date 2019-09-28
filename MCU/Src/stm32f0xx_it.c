@@ -29,6 +29,9 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
 uint8_t refCnt =0;
+extern uint8_t uartTMP[1];
+uint8_t URATRX[50];
+uint8_t RXDcnt=0;
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -57,6 +60,7 @@ uint8_t refCnt =0;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim17;
 
 /* USER CODE BEGIN EV */
@@ -160,6 +164,24 @@ void TIM17_IRQHandler(void)
 	
 
   /* USER CODE END TIM17_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART1 global interrupt.
+  */
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+	HAL_UART_Receive_IT(&huart1,uartTMP,1);
+	URATRX[RXDcnt] = uartTMP[0];
+	RXDcnt++;
+	if(RXDcnt>49)
+		RXDcnt=0;
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
