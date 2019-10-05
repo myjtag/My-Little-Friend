@@ -131,7 +131,7 @@ int main(void)
 	//Please start timer 3 for ADC regular conversion
 	HAL_TIM_Base_Start(&htim3);
 	//Read Data from ADC
-	HAL_ADC_Start_DMA(&hadc, (uint32_t *) ADCData,2);
+	//HAL_ADC_Start_DMA(&hadc, (uint32_t *) ADCData,2);
   while (1)
   {
     /* USER CODE END WHILE */

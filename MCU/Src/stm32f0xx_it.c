@@ -32,6 +32,7 @@ uint8_t refCnt =0;
 extern uint8_t uartTMP[1];
 uint8_t URATRX[50];
 uint8_t RXDcnt=0;
+uint16_t flashCnt =0;
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -63,7 +64,8 @@ uint8_t RXDcnt=0;
 extern DMA_HandleTypeDef hdma_adc;
 extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim17;
-
+extern const uint16_t GaussinPatern[128] ;
+extern uint16_t RGB_DATA[16];
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -171,11 +173,32 @@ void TIM17_IRQHandler(void)
   HAL_TIM_IRQHandler(&htim17);
   /* USER CODE BEGIN TIM17_IRQn 1 */
 	refCnt++;
+	
 	if(refCnt>3)
 	{
 		refCnt = 0;
+
+
+		flashCnt++;
+		if(flashCnt>256)
+			flashCnt = 0;
+		
+		if(flashCnt<128)
+		{
+			RGB_DATA[8] = GaussinPatern[flashCnt];
+			RGB_DATA[9] = GaussinPatern[flashCnt];
+			RGB_DATA[10] = GaussinPatern[flashCnt];
+		}
+		else
+		{
+			RGB_DATA[8] = 0;
+			RGB_DATA[9] = 0;
+			RGB_DATA[10] = 0;
+		}
+
 		updateSegment();
 	}
+	
 	
 
   /* USER CODE END TIM17_IRQn 1 */
