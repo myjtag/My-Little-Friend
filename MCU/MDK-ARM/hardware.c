@@ -132,7 +132,11 @@ void updateSegment(void){
 		break;
 		
 		case 1:
-			RGBtoSegment(SegmentPatern[segmentBuffer[1]]);
+			//we should turn on the Dot
+			if(Now.second % 2)
+				RGBtoSegment(SegmentPatern[segmentBuffer[1]] | 0x80);
+			else
+				RGBtoSegment(SegmentPatern[segmentBuffer[1]]);
 			HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_RESET);
 		break;
 		

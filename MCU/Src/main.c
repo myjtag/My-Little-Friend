@@ -36,6 +36,7 @@ extern uint8_t segmentBuffer[4];
 uint8_t uartTMP[1];
 extern uint8_t URATRX[50];
 uint16_t ADCData[2];//it will cntain the ADC data
+extern DS1307 Now;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -138,7 +139,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		GetTime();
-		sprintf(myName,"%04d",i);
+		sprintf(myName,"%02d%02d",Now.minute,Now.second);
 		segmentBuffer[0] = myName[0] - '0';
 		segmentBuffer[1] = myName[1] - '0';
 		segmentBuffer[2] = myName[2] - '0';
@@ -151,7 +152,18 @@ int main(void)
 		//if it's NAM, please tell me your name
 		if(URATRX[0] == 'N' && URATRX[1] == 'A' && URATRX[2] == 'M'){
 			sprintf(txtBuf,"ASiDesigner and the cnt is %d\r\n",i);
-			HAL_UART_Transmit(&huart1,txtBuf,strlen(txtBuf),100);
+			HAL_UART_Transmit(&huart1,(uint8_t *)txtBuf,strlen(txtBuf),100);
+			clearRXD();
+		}
+		//We should get STM and the time in the 11:39:10 format
+		if(URATRX[0] == 'S' && URATRX[1] == 'T' && URATRX[2] == 'M'){
+			int h,m,s;
+			HAL_Delay(100);
+			sscanf((char*)URATRX,"%*s %d:%d:%d",&h,&m,&s);
+			Now.hour = h;
+			Now.minute = m;
+			Now.second = s;
+			SetTime(Now.second,Now.minute,Now.hour,Now.day,Now.date,Now.month,Now.year);
 			clearRXD();
 		}
   }
