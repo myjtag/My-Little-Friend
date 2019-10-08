@@ -33,6 +33,9 @@ extern uint8_t uartTMP[1];
 uint8_t URATRX[50];
 uint8_t RXDcnt=0;
 uint16_t flashCnt =0;
+extern const uint16_t GaussinPatern[128] ;
+extern uint16_t RGB_DATA[16];
+uint8_t CalRMS = 0;
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -64,8 +67,7 @@ uint16_t flashCnt =0;
 extern DMA_HandleTypeDef hdma_adc;
 extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim17;
-extern const uint16_t GaussinPatern[128] ;
-extern uint16_t RGB_DATA[16];
+
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -158,7 +160,8 @@ void DMA1_Channel1_IRQHandler(void)
   /* USER CODE END DMA1_Channel1_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_adc);
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-
+	HAL_GPIO_TogglePin(GPIOF,GPIO_PIN_0);
+	CalRMS =1;
   /* USER CODE END DMA1_Channel1_IRQn 1 */
 }
 

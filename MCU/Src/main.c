@@ -26,6 +26,7 @@
 #include "stdio.h"
 #include "hardware.h"
 #include "string.h"
+#include "math.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,8 +36,11 @@ extern uint8_t SegmentPatern[16];
 extern uint8_t segmentBuffer[4];
 uint8_t uartTMP[1];
 extern uint8_t URATRX[50];
-uint16_t ADCData[2];//it will cntain the ADC data
+uint16_t ADCData[256][2];//it will cntain the ADC data
 extern DS1307 Now;
+extern uint8_t CalRMS ;
+uint32_t RMS[2];
+float Volt[2];
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -132,14 +136,37 @@ int main(void)
 	//Please start timer 3 for ADC regular conversion
 	HAL_TIM_Base_Start(&htim3);
 	//Read Data from ADC
-	//HAL_ADC_Start_DMA(&hadc, (uint32_t *) ADCData,2);
+	HAL_ADC_Start_DMA(&hadc, (uint32_t *) ADCData,512);
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+		//Buffers are ready for RMS calculation
+		if(CalRMS){
+			CalRMS =0;
+			RMS[0] = 0;
+			RMS[1] = 0;
+			
+			for(i=0;i<256;i++)
+			{
+				RMS[0] += ADCData[i][0] * ADCData[i][0];	
+				RMS[1] += ADCData[i][1] * ADCData[i][1];
+			}
+			
+			//Clac the result by diving by 256
+			RMS[0] = RMS[0] >>8;
+			RMS[1] = RMS[1] >>8;
+			
+			Volt[0] = sqrt(RMS[0]);
+			Volt[1] = sqrt(RMS[1]);
+			
+			Volt[0] = Volt[0] * 0.00593325092707045735475896168109;
+			Volt[1] = Volt[1] * 0.00593325092707045735475896168109;
+		}
 		GetTime();
-		sprintf(myName,"%02d%02d",Now.minute,Now.second);
+		sprintf(myName,"%04d",(int)(Volt[0]*100.0));
+		//sprintf(myName,"%02d%02d",Now.minute,Now.second);
 		segmentBuffer[0] = myName[0] - '0';
 		segmentBuffer[1] = myName[1] - '0';
 		segmentBuffer[2] = myName[2] - '0';
@@ -342,7 +369,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 0;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 23;
+  htim3.Init.Period = 23999;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
